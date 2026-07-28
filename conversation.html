@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Atar Dashboard — Conversation</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="topbar">
+    <a class="back-link" href="index.html">&larr; All conversations</a>
+    <h1 id="conv-title">Conversation</h1>
+    <button class="btn-ghost" onclick="signOut()">Log out</button>
+  </div>
+
+  <div class="conv-detail-wrap">
+    <div class="controls-row">
+      <select id="mode-select">
+        <option value="ai">AI mode</option>
+        <option value="human">Human mode</option>
+        <option value="paused">Paused</option>
+        <option value="closed">Closed</option>
+      </select>
+      <select id="status-select">
+        <option value="new_lead">New lead</option>
+        <option value="in_conversation">In conversation</option>
+        <option value="interested">Interested</option>
+        <option value="ready_to_proceed">Ready to proceed</option>
+        <option value="order_link_sent">Order link sent</option>
+        <option value="waiting_for_customer">Waiting for customer</option>
+        <option value="human_takeover">Human takeover</option>
+        <option value="completed">Completed</option>
+        <option value="closed">Closed</option>
+      </select>
+    </div>
+
+    <div class="messages-wrap" id="messages-wrap">
+      <div class="empty-state">Loading…</div>
+    </div>
+
+    <form class="send-row" id="send-form">
+      <textarea id="message-input" placeholder="Type a message to send as the owner…" required></textarea>
+      <button type="submit" id="send-btn">Send</button>
+    </form>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/conversation.js"></script>
+</body>
+</html>

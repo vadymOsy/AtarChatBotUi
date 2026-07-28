@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Atar Dashboard — Log in</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <nav>
+    <span class="nav-logo">atar</span>
+  </nav>
+
+  <div class="login-wrap">
+    <div class="login-card card">
+      <h1>Owner Dashboard</h1>
+      <p class="subtitle">Log in to monitor and manage conversations.</p>
+      <form id="login-form">
+        <label for="email">Email</label>
+        <input type="email" id="email" required autocomplete="username" />
+
+        <label for="password">Password</label>
+        <input type="password" id="password" required autocomplete="current-password" />
+
+        <div class="error-text" id="error-text"></div>
+
+        <button type="submit" class="btn-primary" id="submit-btn">Log in</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    redirectIfLoggedIn();
+
+    document.getElementById("login-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+      const errorText = document.getElementById("error-text");
+      const submitBtn = document.getElementById("submit-btn");
+
+      errorText.textContent = "";
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Logging in...";
+
+      const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+
+      if (error) {
+        errorText.textContent = error.message;
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Log in";
+        return;
+      }
+
+      window.location.href = "index.html";
+    });
+  </script>
+</body>
+</html>
