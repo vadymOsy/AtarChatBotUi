@@ -1,5 +1,6 @@
 .vercel
 .env
 .env.local
+env-vars.txt
 .DS_Store
 node_modules
