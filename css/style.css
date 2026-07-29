@@ -307,6 +307,13 @@ input::placeholder, textarea::placeholder { color: var(--gray); }
 
 .badge.intent-order { color: var(--white); border-color: var(--blue); background: var(--blue); }
 
+.badge.channel-whatsapp { color: #25D366; border-color: #25D366; }
+.badge.channel-instagram {
+  color: var(--white);
+  border-color: transparent;
+  background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+}
+
 .unread-dot {
   position: absolute;
   top: 18px;

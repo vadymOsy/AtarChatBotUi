@@ -57,9 +57,14 @@ async function loadConversation() {
   }
 
   conversation = data;
-  document.getElementById("conv-title").textContent = data.customer_name || data.customer_phone;
+  document.getElementById("conv-title").textContent = data.customer_name || data.customer_phone || data.external_user_id;
   document.getElementById("mode-select").value = data.mode;
   document.getElementById("status-select").value = data.status;
+
+  const channelLabel = { whatsapp: "WhatsApp", instagram: "Instagram" }[data.channel] || data.channel || "";
+  document.getElementById("conv-channel-badge").innerHTML = channelLabel
+    ? `<span class="badge channel-${escapeHtml(data.channel)}">${escapeHtml(channelLabel)}</span>`
+    : "";
 }
 
 async function loadMessages() {

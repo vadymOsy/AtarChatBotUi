@@ -38,6 +38,11 @@ function linkBadge(linkSent) {
   return `<span class="badge">Link sent</span>`;
 }
 
+function channelBadge(channel) {
+  const label = { whatsapp: "WhatsApp", instagram: "Instagram" }[channel] || channel;
+  return `<span class="badge channel-${escapeHtml(channel || "")}">${escapeHtml(label)}</span>`;
+}
+
 function renderConversations(conversations) {
   const wrap = document.getElementById("list-wrap");
 
@@ -58,6 +63,7 @@ function renderConversations(conversations) {
           </div>
           <div class="conv-preview">${escapeHtml(c.last_message_preview || "")}</div>
           <div class="badge-row">
+            ${channelBadge(c.channel)}
             ${modeBadge(c.mode)}
             ${statusBadge(c.status)}
             ${intentBadge(c.order_intent_status)}
