@@ -43,6 +43,12 @@ function channelBadge(channel) {
   return `<span class="badge channel-${escapeHtml(channel || "")}">${escapeHtml(label)}</span>`;
 }
 
+function leadBadge(score, status) {
+  if (score === null || score === undefined || !status) return "";
+  const label = { cold: "Cold", warm: "Warm", hot: "Hot", ready_to_buy: "Ready to buy" }[status] || status;
+  return `<span class="badge lead-${escapeHtml(status)}">${escapeHtml(label)} · ${escapeHtml(String(score))}</span>`;
+}
+
 function renderConversations(conversations) {
   const wrap = document.getElementById("list-wrap");
 
@@ -68,6 +74,7 @@ function renderConversations(conversations) {
             ${statusBadge(c.status)}
             ${intentBadge(c.order_intent_status)}
             ${linkBadge(c.link_sent)}
+            ${leadBadge(c.lead_score, c.lead_status)}
           </div>
         </a>
       `;
@@ -75,10 +82,11 @@ function renderConversations(conversations) {
     .join("");
 }
 
-async function loadConversations() {
+async function loadConversations(businessId) {
   const { data, error } = await supabaseClient
     .from("conversations")
     .select("*")
+    .eq("business_id", businessId)
     .order("last_message_at", { ascending: false, nullsFirst: false });
 
   if (error) {
@@ -90,18 +98,39 @@ async function loadConversations() {
   renderConversations(data);
 }
 
+function renderBusinessContext(businesses, current) {
+  document.getElementById("business-name").textContent = `— ${current.name}`;
+
+  const switcher = document.getElementById("business-switcher");
+  if (businesses.length > 1) {
+    switcher.style.display = "";
+    switcher.innerHTML = businesses
+      .map((b) => `<option value="${escapeHtml(b.id)}" ${b.id === current.id ? "selected" : ""}>${escapeHtml(b.name)}</option>`)
+      .join("");
+    switcher.onchange = (e) => setCurrentBusiness(e.target.value);
+  }
+}
+
 async function init() {
   const session = await requireSession();
   if (!session) return;
 
-  await loadConversations();
+  const { businesses, current } = await resolveBusinessContext();
+  if (!current) {
+    document.getElementById("list-wrap").innerHTML =
+      `<div class="empty-state">Your account isn't linked to a business yet. Contact your admin.</div>`;
+    return;
+  }
+  renderBusinessContext(businesses, current);
+
+  await loadConversations(current.id);
 
   // Realtime: any insert/update on conversations just re-pulls the full list
   // (simplest correct approach; the table is small enough that this is cheap).
   supabaseClient
     .channel("conversations-list")
     .on("postgres_changes", { event: "*", schema: "public", table: "conversations" }, () => {
-      loadConversations();
+      loadConversations(current.id);
     })
     .subscribe();
 }

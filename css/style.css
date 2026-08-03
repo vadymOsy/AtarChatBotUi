@@ -82,6 +82,26 @@ nav, .topbar {
   gap: 14px;
 }
 
+.business-name {
+  font-weight: 400;
+  color: var(--muted);
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.business-switcher {
+  margin-bottom: 0;
+  width: auto;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1.5px solid var(--border);
+}
+
 .back-link {
   font-size: 13px;
   font-weight: 500;
@@ -312,6 +332,25 @@ input::placeholder, textarea::placeholder { color: var(--gray); }
   color: var(--white);
   border-color: transparent;
   background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+}
+
+.badge.lead-cold { color: var(--muted); background: var(--surface); }
+.badge.lead-warm { color: #92400e; border-color: #fde68a; background: #fef3c7; }
+.badge.lead-hot { color: var(--white); border-color: #f97316; background: #f97316; }
+.badge.lead-ready_to_buy { color: var(--white); border-color: #16a34a; background: #16a34a; }
+
+.lead-insight {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 10px 20px;
+  background: var(--blue-soft);
+  border-bottom: 1px solid var(--border-soft);
+  font-size: 13px;
+}
+
+.lead-insight-text {
+  color: var(--ink);
 }
 
 .unread-dot {

@@ -1,4 +1,4 @@
-const { verifySession } = require("./_verify-session");
+const { verifySession, userOwnsConversation } = require("./_verify-session");
 
 // Proxies a mode/status change to n8n's "set-conversation-mode" webhook.
 // Same pattern as send-message.js: verify the caller's Supabase session,
@@ -9,7 +9,7 @@ module.exports = async function handler(req, res) {
     return;
   }
 
-  const user = await verifySession(req);
+  const { user, token } = await verifySession(req);
   if (!user) {
     res.status(401).json({ error: "Not authenticated" });
     return;
@@ -19,6 +19,12 @@ module.exports = async function handler(req, res) {
   const validModes = ["ai", "human", "paused", "closed"];
   if (!conversationId || !validModes.includes(mode)) {
     res.status(400).json({ error: "conversationId and a valid mode are required" });
+    return;
+  }
+
+  // Multi-tenant guard: same RLS-backed ownership check as send-message.js.
+  if (!(await userOwnsConversation(token, conversationId))) {
+    res.status(403).json({ error: "Not authorized for this conversation" });
     return;
   }
 

@@ -65,6 +65,19 @@ async function loadConversation() {
   document.getElementById("conv-channel-badge").innerHTML = channelLabel
     ? `<span class="badge channel-${escapeHtml(data.channel)}">${escapeHtml(channelLabel)}</span>`
     : "";
+
+  const insight = document.getElementById("lead-insight");
+  if (data.lead_status && data.lead_score !== null) {
+    const statusLabel = { cold: "Cold", warm: "Warm", hot: "Hot", ready_to_buy: "Ready to buy" }[data.lead_status] || data.lead_status;
+    const confidencePct = data.lead_confidence !== null ? ` (${Math.round(data.lead_confidence * 100)}% confidence)` : "";
+    document.getElementById("lead-insight-badge").innerHTML =
+      `<span class="badge lead-${escapeHtml(data.lead_status)}">${escapeHtml(statusLabel)} · ${escapeHtml(String(data.lead_score))}</span>`;
+    document.getElementById("lead-insight-text").textContent =
+      (data.lead_reasoning || "") + confidencePct;
+    insight.style.display = "";
+  } else {
+    insight.style.display = "none";
+  }
 }
 
 async function loadMessages() {

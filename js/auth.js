@@ -31,3 +31,35 @@ async function signOut() {
   await supabaseClient.auth.signOut();
   window.location.href = "login.html";
 }
+
+// Multi-tenant: resolves which business (or businesses) the logged-in user
+// belongs to. Most users belong to exactly one - that becomes the active
+// workspace transparently. A user with more than one gets a small switcher
+// (see dashboard.js/conversation.js) stored in sessionStorage per tab.
+async function resolveBusinessContext() {
+  const { data, error } = await supabaseClient
+    .from("business_members")
+    .select("business_id, role, businesses(name)")
+    .order("created_at", { ascending: true });
+
+  if (error || !data || !data.length) {
+    return { businesses: [], current: null };
+  }
+
+  const businesses = data.map((row) => ({
+    id: row.business_id,
+    name: row.businesses?.name || "Business",
+    role: row.role,
+  }));
+
+  const storedId = sessionStorage.getItem("currentBusinessId");
+  const current = businesses.find((b) => b.id === storedId) || businesses[0];
+  sessionStorage.setItem("currentBusinessId", current.id);
+
+  return { businesses, current };
+}
+
+function setCurrentBusiness(businessId) {
+  sessionStorage.setItem("currentBusinessId", businessId);
+  window.location.reload();
+}
