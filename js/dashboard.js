@@ -61,7 +61,7 @@ function renderConversations(conversations) {
     .map((c) => {
       const name = c.customer_name || c.customer_phone;
       return `
-        <a class="conv-card ${c.unread_by_owner ? "unread" : ""}" href="conversation.html?id=${encodeURIComponent(c.id)}">
+        <a class="conv-card ${c.unread_by_owner ? "unread" : ""}" data-mode="${escapeHtml(c.mode || "")}" href="conversation.html?id=${encodeURIComponent(c.id)}">
           ${c.unread_by_owner ? '<span class="unread-dot"></span>' : ""}
           <div class="conv-card-top">
             <span class="conv-name">${escapeHtml(name)}</span>

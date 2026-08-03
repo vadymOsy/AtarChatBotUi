@@ -4,22 +4,40 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Atar Dashboard — Conversations</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-  <div class="topbar">
-    <span class="nav-logo">atar</span>
+  <header class="topbar">
+    <span class="nav-logo">
+      <svg class="logo-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+      </svg>
+      atar
+    </span>
     <h1>Conversations <span id="business-name" class="business-name"></span></h1>
     <div class="topbar-right">
       <select id="business-switcher" class="business-switcher" style="display:none"></select>
-      <button class="btn-ghost" onclick="signOut()">Log out</button>
+      <button class="btn-ghost" onclick="signOut()">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+          <polyline points="16 17 21 12 16 7"></polyline>
+          <line x1="21" y1="12" x2="9" y2="12"></line>
+        </svg>
+        <span>Log out</span>
+      </button>
     </div>
+  </header>
+
+  <div class="legend-row" aria-hidden="true">
+    <span class="legend-item"><i class="dot dot-jade"></i> AI handling</span>
+    <span class="legend-item"><i class="dot dot-ember"></i> Human takeover</span>
+    <span class="legend-item"><i class="dot dot-gold"></i> Paused</span>
   </div>
 
-  <div class="list-wrap" id="list-wrap">
+  <main class="list-wrap" id="list-wrap">
     <div class="empty-state" id="empty-state">Loading…</div>
-  </div>
+  </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <script src="js/supabase-config.js"></script>
