@@ -53,7 +53,9 @@ module.exports = async function handler(req, res) {
       "Content-Type": "application/json",
       [process.env.N8N_WEBHOOK_HEADER_NAME]: process.env.N8N_WEBHOOK_HEADER_VALUE,
     },
-    body: JSON.stringify({ conversationId, message }),
+    // senderUserId comes from the session we just verified server-side, never
+    // from the request body - the client can't spoof who actually sent this.
+    body: JSON.stringify({ conversationId, message, senderUserId: user.id }),
   });
 
   const text = await n8nRes.text();
