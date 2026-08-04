@@ -121,16 +121,11 @@ async function loadMessages() {
 }
 
 async function markRead() {
-  await supabaseClient
-    .from("conversations")
-    .update({ unread_by_owner: false })
-    .eq("id", conversationId);
-
-  await supabaseClient
-    .from("messages")
-    .update({ read_by_owner: true })
-    .eq("conversation_id", conversationId)
-    .eq("read_by_owner", false);
+  // Table-level UPDATE on conversations/messages is intentionally not
+  // granted to authenticated users (see the RLS hardening migrations) -
+  // this narrow RPC does exactly the two-column write "mark as read"
+  // needs, scoped to the caller's own business membership server-side.
+  await supabaseClient.rpc("mark_conversation_read", { p_conversation_id: conversationId });
 }
 
 async function callApi(path, body) {
