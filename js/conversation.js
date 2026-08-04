@@ -18,9 +18,21 @@ function formatTime(iso) {
 
 const params = new URLSearchParams(window.location.search);
 const conversationId = params.get("id");
+const WINDOW_MS = 24 * 60 * 60 * 1000;
 
 let session = null;
 let conversation = null;
+
+function updateReplyWindowState() {
+  const withinWindow =
+    conversation &&
+    conversation.last_customer_message_at &&
+    Date.now() - new Date(conversation.last_customer_message_at).getTime() <= WINDOW_MS;
+
+  document.getElementById("window-closed-banner").style.display = withinWindow ? "none" : "";
+  document.getElementById("message-input").disabled = !withinWindow;
+  document.getElementById("send-btn").disabled = !withinWindow;
+}
 
 function senderLabel(senderType) {
   if (senderType === "ai") return "AI response";
@@ -70,6 +82,7 @@ async function loadConversation() {
   document.getElementById("conv-title").textContent = data.customer_name || data.customer_phone || data.external_user_id;
   document.getElementById("mode-select").value = data.mode;
   document.getElementById("status-select").value = data.status;
+  updateReplyWindowState();
 
   const channelLabel = { whatsapp: "WhatsApp", instagram: "Instagram" }[data.channel] || data.channel || "";
   document.getElementById("conv-channel-badge").innerHTML = channelLabel
@@ -132,7 +145,11 @@ async function callApi(path, body) {
 
   if (!res.ok) {
     const text = await res.text();
-    throw new Error(text || `Request to ${path} failed`);
+    let message = text || `Request to ${path} failed`;
+    try {
+      message = JSON.parse(text).error || message;
+    } catch {}
+    throw new Error(message);
   }
 
   return res.json().catch(() => ({}));
@@ -173,7 +190,7 @@ function wireControls() {
     } catch (err) {
       alert("Failed to send message: " + err.message);
     } finally {
-      sendBtn.disabled = false;
+      updateReplyWindowState();
     }
   });
 }

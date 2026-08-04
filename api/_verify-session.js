@@ -36,11 +36,20 @@ async function verifySession(req) {
 }
 
 async function userOwnsConversation(token, conversationId) {
+  const row = await getOwnedConversation(token, conversationId, "id");
+  return row !== null;
+}
+
+// Same RLS-backed ownership check as userOwnsConversation, but returns the
+// requested columns instead of a boolean - lets callers make decisions
+// (e.g. the WhatsApp 24h reply window) based on the conversation's own data
+// without a second round trip.
+async function getOwnedConversation(token, conversationId, select = "id") {
   const supabaseUrl = process.env.SUPABASE_URL;
   const anonKey = process.env.SUPABASE_ANON_KEY;
 
   const res = await fetch(
-    `${supabaseUrl}/rest/v1/conversations?id=eq.${encodeURIComponent(conversationId)}&select=id`,
+    `${supabaseUrl}/rest/v1/conversations?id=eq.${encodeURIComponent(conversationId)}&select=${select}`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -50,11 +59,11 @@ async function userOwnsConversation(token, conversationId) {
   );
 
   if (!res.ok) {
-    return false;
+    return null;
   }
 
   const rows = await res.json();
-  return Array.isArray(rows) && rows.length > 0;
+  return Array.isArray(rows) && rows.length > 0 ? rows[0] : null;
 }
 
-module.exports = { verifySession, userOwnsConversation };
+module.exports = { verifySession, userOwnsConversation, getOwnedConversation };

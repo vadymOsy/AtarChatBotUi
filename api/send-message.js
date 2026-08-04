@@ -1,4 +1,6 @@
-const { verifySession, userOwnsConversation } = require("./_verify-session");
+const { verifySession, getOwnedConversation } = require("./_verify-session");
+
+const WINDOW_MS = 24 * 60 * 60 * 1000;
 
 // Proxies an owner-authored message to n8n's "owner-send-message" webhook.
 // The n8n webhook secret lives only in this function's environment
@@ -24,8 +26,24 @@ module.exports = async function handler(req, res) {
   // Multi-tenant guard: reject if this user's own business membership (via
   // RLS) doesn't include this conversation - prevents one business's owner
   // from messaging another business's customers by guessing a conversation id.
-  if (!(await userOwnsConversation(token, conversationId))) {
+  const conversation = await getOwnedConversation(token, conversationId, "id,last_customer_message_at");
+  if (!conversation) {
     res.status(403).json({ error: "Not authorized for this conversation" });
+    return;
+  }
+
+  // WhatsApp only allows free-form replies within 24h of the customer's last
+  // message - sending outside that window risks Meta flagging/restricting
+  // the number. Block it here, not just in the UI, in case a stale page or
+  // a direct API call tries to send after the window has closed.
+  const lastCustomerMessageAt = conversation.last_customer_message_at
+    ? new Date(conversation.last_customer_message_at).getTime()
+    : null;
+  if (!lastCustomerMessageAt || Date.now() - lastCustomerMessageAt > WINDOW_MS) {
+    res.status(422).json({
+      error: "This conversation's 24-hour reply window has closed. The customer needs to message again before you can reply.",
+      code: "WINDOW_CLOSED",
+    });
     return;
   }
 

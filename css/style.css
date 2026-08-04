@@ -258,6 +258,11 @@ input:focus, textarea:focus { border-color: var(--ink); box-shadow: 0 0 0 3px rg
 #messages-wrap > .from-ai, #messages-wrap > [data-sender="ai"] { border-color: var(--jade); }
 #messages-wrap > .from-customer, #messages-wrap > [data-sender="customer"] { margin-right: auto; }
 
+.window-closed-banner {
+  background: var(--ember-dim); border: 1px solid rgba(255,106,57,.35); color: #A03D14;
+  border-radius: var(--radius-sm); padding: .7rem 1rem; font-size: .85rem; margin-bottom: .75rem;
+}
+
 .send-row {
   display: flex; gap: .75rem; align-items: flex-end; position: sticky; bottom: 1.25rem;
   margin-top: 1rem; background: var(--mist); padding-top: .5rem;
