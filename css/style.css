@@ -315,6 +315,13 @@ input:focus, textarea:focus { border-color: var(--ink); box-shadow: 0 0 0 3px rg
 .msg.ai { border-color: var(--jade); }
 .msg.customer { margin-right: auto; }
 .msg-meta { font-family: var(--font-mono); font-size: .68rem; opacity: .6; margin-top: .35rem; }
+.msg-sender {
+  font-family: var(--font-mono); font-size: .65rem; text-transform: uppercase; letter-spacing: .05em;
+  font-weight: 600; opacity: .7; margin-bottom: .3rem;
+}
+.msg.ai .msg-sender { color: var(--jade); }
+.msg.owner .msg-sender { color: var(--text-on-ink-soft); }
+.msg.customer .msg-sender { color: var(--text-soft); }
 
 /* ---------------------------------------------------------------- responsive */
 @media (max-width: 640px) {

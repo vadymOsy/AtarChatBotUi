@@ -22,6 +22,15 @@ const conversationId = params.get("id");
 let session = null;
 let conversation = null;
 
+function senderLabel(senderType) {
+  if (senderType === "ai") return "AI response";
+  if (senderType === "owner") return "Staff";
+  if (senderType === "customer") {
+    return (conversation && (conversation.customer_name || conversation.customer_phone)) || "Customer";
+  }
+  return senderType;
+}
+
 function renderMessages(messages) {
   const wrap = document.getElementById("messages-wrap");
 
@@ -34,6 +43,7 @@ function renderMessages(messages) {
     .map(
       (m) => `
         <div class="msg ${escapeHtml(m.sender_type)}">
+          <div class="msg-sender">${escapeHtml(senderLabel(m.sender_type))}</div>
           ${escapeHtml(m.content)}
           <div class="msg-meta">${formatTime(m.created_at)}</div>
         </div>
